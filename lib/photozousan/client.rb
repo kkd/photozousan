@@ -8,9 +8,15 @@ module Photozousan
     PHOTO_INFO_URL = "https://api.photozou.jp/rest/photo_info.json?private=true&photo_id="
     PHOTO_ALBUM_PHOTO_URL = "https://api.photozou.jp/rest/photo_album_photo.json"
 
-    def initialize(id, pass)
+    def initialize(id, pass, album_id = nil)
       @certs = [id, pass]
-      @base_dir = "Original_#{Time.now.strftime('%Y%m%d%H%M%S')}"
+      @album_id = album_id
+      timestamp = Time.now.strftime('%Y%m%d%H%M%S')
+      @base_dir = if @album_id
+                    "Original_#{@album_id}_#{timestamp}"
+                  else
+                    "Original_#{timestamp}"
+                  end
       FileUtils.mkdir_p(@base_dir)
     end
 

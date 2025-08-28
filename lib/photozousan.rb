@@ -25,7 +25,7 @@ module Photozousan
       pass = STDIN.noecho(&:gets).chomp
     end
 
-    Client.new(id, pass).dowmload_all_images(album_id, limit)
+    Client.new(id, pass, album_id).dowmload_all_images(album_id, limit)
   end
 
   def self.parse_arguments
