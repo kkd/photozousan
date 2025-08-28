@@ -18,7 +18,7 @@
 
     http://photozou.jp/photo/list/[ユーザーID]/[アルバムID]
 * donwload image limit?(1-1000): 1度にダウンロードする写真ファイルの上限を設定します。奨励値は100です。
-* your photozou id?: あなたのフォト蔵ID（メールアドレス）
+* your photozou id?: あなたのフォト蔵ID（メールアドレス）(注：フォト蔵のURLに含まれるID**ではありません**)
 * your photozou password?: あなたのフォト蔵パスワード
 （Twitter/Facebookアカウントでユーザー登録している場合、マイページの「設定」からパスワードを設定する必要があります。）
 
