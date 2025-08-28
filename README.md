@@ -12,7 +12,42 @@
 
 ## Usage
 
-    $ photozousan
+### コマンドライン引数を使用する方法（推奨）
+
+```bash
+# bin/photozousanコマンドを使用する場合
+$ photozousan -i "your-email@example.com" -p "your-password" -a 12345 -l 100
+
+# または、直接rubyファイルを実行する場合
+$ ruby lib/photozousan.rb -i "your-email@example.com" -p "your-password" -a 12345 -l 100
+
+# 短縮形
+$ photozousan -i "your-email@example.com" -p "your-password" -a 12345 -l 100
+
+# 長い形式
+$ photozousan --id "your-email@example.com" --password "your-password" --album 12345 --limit 100
+
+# ヘルプを表示
+$ photozousan -h
+
+# バージョンを表示
+$ photozousan -v
+```
+
+#### オプション一覧
+
+- `-i, --id ID`: PhotoZouのユーザーID（メールアドレス）
+- `-p, --password PASSWORD`: PhotoZouのパスワード
+- `-a, --album ALBUM_ID`: ダウンロードするアルバムID
+- `-l, --limit LIMIT`: ダウンロードする写真の上限数（1-1000）
+- `-h, --help`: ヘルプメッセージを表示
+- `-v, --version`: バージョン情報を表示
+
+### 対話的に入力する方法（従来の方法）
+
+```bash
+$ ruby lib/photozousan.rb
+```
 
 * donwload photozou-album id?: アルバムIDを入力します。フォト蔵アルバムページURL末尾の数値がアルバムURLとなります。
 
@@ -22,7 +57,15 @@
 * your photozou password?: あなたのフォト蔵パスワード
 （Twitter/Facebookアカウントでユーザー登録している場合、マイページの「設定」からパスワードを設定する必要があります。）
 
-コマンドを実行したディレクトリに Original_[ダウンロード時刻] というフォルダが作成され、全ての写真はそのフォルダにダウンロードされます。
+## 注意事項
+
+- ユーザーIDはフォト蔵のURLに含まれるIDではなく、**メールアドレス**です
+- パスワードは平文でコマンドラインに表示されるため、履歴に残らないよう注意してください
+- アルバムIDはフォト蔵のアルバムページURLの末尾の数値です
+
+## 出力
+
+コマンドを実行したディレクトリに `Original_[ダウンロード時刻]` というフォルダが作成され、全ての写真はそのフォルダにダウンロードされます。
 
 ## Contributing
 

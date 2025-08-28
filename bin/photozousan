@@ -1,4 +1,20 @@
 #!/usr/bin/env ruby
 require 'photozousan'
 
-Photozousan.run(nil, nil, nil, nil)
+begin
+  options = Photozousan.parse_arguments
+
+  id = options[:id]
+  pass = options[:password]
+  album_id = options[:album_id]
+  limit = options[:limit]
+
+  Photozousan.run(id, pass, album_id, limit)
+rescue OptionParser::InvalidOption, OptionParser::MissingArgument => e
+  puts "Error: #{e.message}"
+  puts "Use -h or --help for usage information"
+  exit 1
+rescue => e
+  puts "Error: #{e.message}"
+  exit 1
+end
