@@ -2,11 +2,10 @@ require 'open-uri'
 require 'openssl'
 require 'json'
 require 'fileutils'
-require 'pp'
 
 module Photozousan
   class Client
-    PHOTO_INFO_URL = "https://api.photozou.jp/rest/photo_info.json?photo_id="
+    PHOTO_INFO_URL = "https://api.photozou.jp/rest/photo_info.json?private=true&photo_id="
     PHOTO_ALBUM_PHOTO_URL = "https://api.photozou.jp/rest/photo_album_photo.json"
 
     def initialize(id, pass)
@@ -23,7 +22,13 @@ module Photozousan
 
     def get_original_image_uri(photo_id)
       extInfo_uri = URI.parse(PHOTO_INFO_URL + photo_id.to_s)
-      extInfo = JSON.parse(URI.open(extInfo_uri).read)
+
+      # 認証情報付きでAPIを呼び出し（非公開アルバムのダウンロード対応）
+      extInfo = JSON.parse(URI.open(extInfo_uri,
+        http_basic_authentication: @certs,
+        ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE
+      ).read)
+
       original_image_url = extInfo['info']['photo']['original_image_url']
       original_image_uri = URI.parse(original_image_url)
     end
@@ -45,7 +50,7 @@ module Photozousan
     end
 
     def get_all_photos(album_id, limit)
-      print "\ngetting all image-urls...."
+      print "\n...getting all image-urls...."
       uri = URI.parse(PHOTO_ALBUM_PHOTO_URL)
       query = URI.encode_www_form(album_id: album_id, limit: limit)
       full_uri = URI.parse("#{uri}?#{query}")
