@@ -38,9 +38,70 @@ module Photozousan
     private
 
     def write_album_info(album_info, album_dir)
+      # JSONファイルを出力
       File.open(File.join(album_dir, 'album_info.json'), 'w') do |file|
         file.write(album_info.to_json)
       end
+
+      # Markdownファイルを出力
+      File.open(File.join(album_dir, 'album_info.md'), 'w') do |file|
+        file.write(generate_markdown(album_info))
+      end
+    end
+
+    def generate_markdown(album_info)
+      return "# アルバム情報が見つかりません\n\nアルバム情報の取得に失敗しました。" unless album_info
+
+      markdown = []
+      markdown << "# #{album_info['name'] || 'アルバム名なし'}"
+      markdown << ""
+
+      if album_info['description'] && !album_info['description'].empty?
+        markdown << "## 説明"
+        markdown << ""
+        markdown << album_info['description'].gsub("\r\n", "\n")
+        markdown << ""
+      end
+
+      markdown << "## 基本情報"
+      markdown << ""
+      markdown << "| 項目 | 値 |"
+      markdown << "|------|-----|"
+      markdown << "| アルバムID | #{album_info['album_id']} |"
+      markdown << "| ユーザーID | #{album_info['user_id']} |"
+      markdown << "| 写真数 | #{album_info['photo_num']}枚 |"
+      markdown << "| 作成日時 | #{album_info['created_time']} |"
+      markdown << "| 更新日時 | #{album_info['updated_time']} |"
+      markdown << "| 権限タイプ | #{album_info['perm_type']} |"
+      markdown << "| 公開範囲 | #{album_info['perm_type2']} |"
+      markdown << "| 並び順 | #{album_info['order_type']} |"
+      markdown << "| 著作権 | #{album_info['copyright_type']} |"
+      markdown << "| 商用利用 | #{album_info['copyright_commercial']} |"
+      markdown << "| 改変許可 | #{album_info['copyright_modifications']} |"
+      markdown << ""
+
+      if album_info['cover_photo_id']
+        markdown << "## カバー写真"
+        markdown << ""
+        markdown << "カバー写真ID: #{album_info['cover_photo_id']}"
+        markdown << ""
+      end
+
+      if album_info['perm_msg'] && !album_info['perm_msg'].empty?
+        markdown << "## 公開メッセージ"
+        markdown << ""
+        markdown << album_info['perm_msg']
+        markdown << ""
+      end
+
+      if album_info['upload_email'] && !album_info['upload_email'].empty?
+        markdown << "## アップロード情報"
+        markdown << ""
+        markdown << "アップロード用メールアドレス: #{album_info['upload_email']}"
+        markdown << ""
+      end
+
+      markdown.join("\n")
     end
 
     def get_album_info(album_id)
