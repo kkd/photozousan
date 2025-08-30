@@ -12,3 +12,5 @@
 *.o
 *.a
 mkmf.log
+Original_*/*
+.DS_Store
