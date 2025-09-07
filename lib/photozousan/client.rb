@@ -144,22 +144,33 @@ module Photozousan
         ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE
       ).read)
 
-      original_image_url = extInfo['info']['photo']['original_image_url']
-      original_image_uri = URI.parse(original_image_url)
+      if extInfo['info'] && extInfo['info']['photo'] && extInfo['info']['photo']['original_image_url']
+        original_image_url = extInfo['info']['photo']['original_image_url']
+        URI.parse(original_image_url)
+      else
+        raise "Photo info not found for photo_id: #{photo_id}. Response: #{extInfo}"
+      end
     end
 
     def download(result)
       print 'start download.....'
       result["info"]["photo"].each do |photo|
-        img_uri = URI.parse(photo["original_image_url"])
         id = photo["photo_id"]
-        original_image_uri = get_original_image_uri(id)
+        begin
+          original_image_uri = get_original_image_uri(id)
 
-        File.binwrite(
-          File.join(@base_dir, "#{id}.jpg"),
-          URI.open(original_image_uri, http_basic_authentication: @certs).read
-        )
-        print '.'
+          File.binwrite(
+            File.join(@base_dir, "#{id}.jpg"),
+            URI.open(original_image_uri, http_basic_authentication: @certs).read
+          )
+          print '.'
+        rescue => e
+          puts "\nError downloading photo #{id}: #{e.message}"
+          puts "Photo ID: #{id}"
+          puts "URL: #{original_image_uri}" if defined?(original_image_uri)
+          # エラーが発生しても他の写真のダウンロードを続行
+          next
+        end
       end
       puts 'finished.'
     end
